@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Porco | Dashboard Palmeiras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f3f4f6; }
+        .bg-palmeiras { background-color: #006437; }
+        .text-palmeiras { color: #006437; }
+    </style>
+</head>
+<body>
+
+    <header class="bg-palmeiras text-white p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold italic">INFO PORCO 🐷</h1>
+            <span id="last-update" class="text-sm opacity-80">Atualizado em: --/--/--</span>
+        </div>
+    </header>
+
+    <main class="container mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <section class="bg-white rounded-xl shadow-md p-5">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-palmeiras"><i class="fab fa-youtube mr-2"></i> TV Palmeiras</h2>
+            <div id="youtube-feed" class="space-y-4">
+                <p class="text-gray-500 italic text-sm text-center">Carregando vídeos...</p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-md p-5">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-palmeiras"><i class="fas fa-calendar-alt mr-2"></i> Agenda & Resultados</h2>
+            <div id="match-calendar" class="space-y-3">
+                <div class="bg-green-50 p-3 rounded-lg border-l-4 border-green-600 mb-4">
+                    <p class="text-xs font-bold uppercase text-green-700">Próximo Jogo</p>
+                    <p class="font-bold">Palmeiras x Novorizontino</p>
+                    <p class="text-xs text-gray-600 italic">Hoje, 20h00 - Arena Barueri</p>
+                </div>
+                <div id="last-results" class="text-sm space-y-2">
+                    <p class="text-gray-500 italic text-center text-sm">Buscando placares...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-md p-5">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-palmeiras"><i class="fas fa-newspaper mr-2"></i> Radar de Notícias</h2>
+            <div id="news-feed" class="space-y-4 text-sm">
+                <p class="text-gray-500 italic text-center">Varrendo os portais...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Aqui entraremos com a mágica do Apify no próximo passo
+        console.log("Dashboard pronto para receber os dados do Apify.");
+    </script>
+</body>
+</html>
