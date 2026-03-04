@@ -15,10 +15,28 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .next-game-active { border: 2px solid #fbbf24; background-color: #f0fff4; }
-        /* Efeito de pulsação para Reels/Vídeos sem prévia */
-        .reels-fallback { background: #006437; position: relative; overflow: hidden; }
-        .pulse { animation: pulse-green 2s infinite; }
-        @keyframes pulse-green { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        
+        /* Estilo para Reels sem pré-visualização: Fundo transparente com botão Play VERDE */
+        .reels-fallback { 
+            background-color: rgba(255, 255, 255, 0.1); /* Fundo quase transparente */
+            position: relative; 
+            display: flex;
+            align-items: center;
+            justify-center;
+        }
+        .play-button-green {
+            color: #00C853; /* Verde vibrante para o Play */
+            font-size: 3rem;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+        .group:hover .play-button-green {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+        /* Efeito de pulsação suave no botão verde */
+        .pulse-green { animation: pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
     </style>
 </head>
 <body class="pb-10">
@@ -41,7 +59,7 @@
         <section class="mb-10 bg-white p-6 rounded-2xl card-shadow max-w-2xl mx-auto border-t-4 border-palmeiras">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-lg font-bold text-palmeiras uppercase italic">
-                    <i class="fas fa-calendar-day mr-2"></i> Próximo Jogo
+                    <i class="fas fa-calendar-day mr-2"></i> Próximo Jogo (Final)
                 </h2>
                 <div class="flex items-center space-x-1.5 bg-gray-50 px-3 py-1.5 rounded-full border">
                     <span class="text-[9px] font-bold text-gray-400 mr-1 uppercase">Histórico:</span>
@@ -65,7 +83,7 @@
                         </div>
                         <span class="font-black text-2xl text-gray-400">X</span>
                         <div class="text-center">
-                            <img src="https://upload.wikimedia.org/wikipedia/pt/8/89/Gremio_Novorizontino_SP.png" class="h-12 w-12 object-contain mx-auto" alt="Novorizontino">
+                            <img src="./Grêmio_Novorizontino_logo.png" class="h-12 w-12 object-contain mx-auto" alt="Novorizontino">
                             <p class="text-[10px] font-bold mt-1 text-gray-500 italic uppercase">NOV</p>
                         </div>
                     </div>
@@ -99,8 +117,7 @@
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
                 <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-4 text-white flex justify-between items-center border-b-2 border-purple-700">
-                    <h2 class="font-bold uppercase italic tracking-wider text-xs">Palmeiras Oficial (Feed)</h2>
-                    <i class="fab fa-instagram text-lg"></i>
+                    <h2 class="font-bold uppercase italic tracking-wider text-xs flex items-center">Palmeiras Oficial (Feed) <i class="fab fa-instagram ml-2"></i></h2>
                 </div>
                 <div id="instagram-feed" class="grid grid-cols-2 gap-3 p-4 max-h-[800px] overflow-y-auto no-scrollbar"></div>
             </section>
@@ -127,26 +144,30 @@
         // YouTube - 8 Vídeos Reais
         fetch(apiYoutube).then(res => res.json()).then(data => {
             const container = document.getElementById('youtube-feed');
+            container.innerHTML = '';
             data.slice(0, 8).forEach(video => {
                 container.innerHTML += `
                     <a href="${video.url}" target="_blank" class="block group border-b pb-3 mb-3 last:border-0 hover:bg-gray-50 transition rounded-lg">
-                        <img src="${video.thumbnailUrl}" class="rounded-lg w-full mb-2 shadow-sm border">
+                        <img src="${video.thumbnailUrl}" class="rounded-lg w-full mb-2 shadow-sm border" alt="Thumbnail">
                         <h3 class="font-bold text-[11px] group-hover:text-red-600 leading-tight">${video.title}</h3>
                     </a>`;
             });
         });
 
-        // Instagram - 8 Posts Reais (Lógica para Vídeo/Reels)
+        // Instagram - 8 Posts Reais (Lógica para Vídeo/Reels com Play Verde)
         fetch(apiInstagram).then(res => res.json()).then(data => {
             const container = document.getElementById('instagram-feed');
+            container.innerHTML = '';
             data.slice(0, 8).forEach(post => {
-                const hasNoImg = !post.displayUrl || post.type?.includes('video');
+                const isVideo = post.type?.includes('video') || !post.displayUrl;
+                
                 container.innerHTML += `
-                    <a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden border group bg-gray-100 shadow-sm relative ${hasNoImg ? 'reels-fallback' : ''}">
-                        ${hasNoImg ? 
-                            `<img src="./ChatGPT Image Mar 4, 2026, 03_19_20 PM.png" class="w-full h-full object-cover opacity-40 pulse">
-                             <div class="absolute inset-0 flex items-center justify-center"><i class="fas fa-play text-white text-2xl opacity-80"></i></div>` : 
-                            `<img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">`
+                    <a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden border group shadow-sm relative ${isVideo ? 'reels-fallback' : 'bg-gray-100'}">
+                        ${isVideo ? 
+                            `<div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-play-circle play-button-green pulse-green"></i>
+                             </div>` : 
+                            `<img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Instagram Post">`
                         }
                     </a>`;
             });
@@ -157,7 +178,7 @@
             const container = document.getElementById('news-feed');
             // Mock de notícias reais simulando o comportamento do scraper
             const newsItems = [
-                { t: "Escalação: Palmeiras vai com força máxima para a final contra Novorizontino.", d: "04/03 15h10", s: "GE", url: "https://ge.globo.com/futebol/times/palmeiras/" },
+                { t: "Escalação confirmada: Abel Ferreira define o Palmeiras para a grande final.", d: "04/03 16h30", s: "GE", url: "https://ge.globo.com/futebol/times/palmeiras/" },
                 { t: "Leila Pereira garante permanência de Abel Ferreira independentemente do resultado.", d: "04/03 14h20", s: "UOL", url: "https://www.uol.com.br/esporte/futebol/times/palmeiras/" },
                 { t: "Análise: Os segredos táticos que levaram o Palmeiras à sétima final seguida.", d: "04/03 11h45", s: "GAZETA", url: "https://www.gazetaesportiva.com/times/palmeiras/" },
                 { t: "CazéTV bate recorde de audiência simultânea em jogos do Palmeiras no Paulista.", d: "03/03 18h30", s: "LANCE", url: "https://www.lance.com.br/palmeiras/" },
