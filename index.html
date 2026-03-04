@@ -14,7 +14,7 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .next-game-active { border: 3px solid #006437; background-color: #f0fff4; transform: scale(1.05); z-index: 10; }
-        .logo-header { height: 60px; width: auto; object-fit: contain; }
+        .logo-header { height: 65px; width: 65px; object-fit: cover; border: 2px solid #fbbf24; }
     </style>
 </head>
 <body class="pb-10">
@@ -22,12 +22,12 @@
     <header class="bg-palmeiras text-white p-4 shadow-xl border-b-4 border-yellow-500 sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <img src="https://i.ibb.co/XfXkY0p/ChatGPT-Image-Mar-4-2026-03-19-20-PM.jpg" alt="Logo Info Porco" class="logo-header rounded-full">
+                <img src="./ChatGPT Image Mar 4, 2026, 03_19_20 PM.png" alt="Logo Info Porco" class="logo-header rounded-full bg-white">
                 <h1 class="text-2xl md:text-3xl font-black italic tracking-tighter">INFO PORCO</h1>
             </div>
             <div class="text-right">
                 <p id="clock" class="text-sm font-mono opacity-80"></p>
-                <span class="bg-yellow-500 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">Feed Atualizado</span>
+                <span class="bg-yellow-500 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest text-center">Data Hub</span>
             </div>
         </div>
     </header>
@@ -37,7 +37,7 @@
         <section class="mb-10 bg-white p-6 rounded-2xl card-shadow relative overflow-hidden">
             <div class="flex items-center mb-6 space-x-2">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" class="h-6 w-6">
-                <h2 class="text-xl font-bold text-palmeiras uppercase tracking-tight italic">Linha do Tempo: Últimos Jogos + Próximo</h2>
+                <h2 class="text-xl font-bold text-palmeiras uppercase tracking-tight italic">Últimos Jogos + Próximo (Final)</h2>
             </div>
             
             <button onclick="scrollCarousel(-300)" class="absolute left-2 top-[60%] -translate-y-1/2 z-20 bg-white/90 shadow-lg rounded-full p-3 text-palmeiras hover:bg-palmeiras hover:text-white transition">
@@ -48,20 +48,20 @@
             </button>
 
             <div id="match-carousel" class="flex overflow-x-auto space-x-6 pb-6 pt-2 no-scrollbar snap-x scroll-smooth px-4">
-            </div>
+                </div>
         </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
                 <div class="bg-red-600 p-4 flex justify-between items-center text-white">
-                    <h2 class="font-bold uppercase italic tracking-wider flex items-center">TV Palmeiras <i class="fab fa-youtube ml-2"></i></h2>
+                    <h2 class="font-bold uppercase italic tracking-wider flex items-center text-sm">TV Palmeiras Sportingbet <i class="fab fa-youtube ml-2"></i></h2>
                 </div>
                 <div id="youtube-feed" class="p-4 space-y-4 max-h-[650px] overflow-y-auto"></div>
             </section>
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
                 <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-4 flex justify-between items-center text-white">
-                    <h2 class="font-bold uppercase italic tracking-wider flex items-center">Instagram Feed <i class="fab fa-instagram ml-2"></i></h2>
+                    <h2 class="font-bold uppercase italic tracking-wider flex items-center text-sm">Palmeiras Oficial <i class="fab fa-instagram ml-2"></i></h2>
                 </div>
                 <div id="instagram-feed" class="grid grid-cols-2 gap-2 p-4 max-h-[650px] overflow-y-auto"></div>
             </section>
@@ -69,7 +69,7 @@
             <section class="bg-white rounded-2xl card-shadow overflow-hidden border-t-4 border-palmeiras">
                 <div class="p-4 flex justify-between items-center bg-gray-50 border-b">
                     <h2 class="font-bold text-palmeiras uppercase italic tracking-wider text-sm">Radar (Últimos 15 dias)</h2>
-                    <i class="fas fa-calendar-check text-palmeiras text-xl"></i>
+                    <i class="fas fa-newspaper text-palmeiras text-xl"></i>
                 </div>
                 <div id="news-feed" class="p-4 space-y-4 max-h-[650px] overflow-y-auto"></div>
             </section>
@@ -87,6 +87,7 @@
         const apiYoutube = "https://api.apify.com/v2/datasets/1QGeVr2JCgGqahg48/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
         const apiInstagram = "https://api.apify.com/v2/datasets/rkYsnz4RNoV7XNCdy/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
 
+        // YouTube
         fetch(apiYoutube).then(res => res.json()).then(data => {
             const container = document.getElementById('youtube-feed');
             container.innerHTML = '';
@@ -94,104 +95,97 @@
                 container.innerHTML += `
                     <a href="${video.url}" target="_blank" class="block group border-b pb-3 mb-3 last:border-0">
                         <img src="${video.thumbnailUrl}" class="rounded-lg w-full group-hover:opacity-80 transition shadow-sm border">
-                        <h3 class="font-bold text-sm mt-2 leading-tight group-hover:text-red-600">${video.title}</h3>
+                        <h3 class="font-bold text-xs mt-2 leading-tight group-hover:text-red-600">${video.title}</h3>
                     </a>`;
             });
         });
 
+        // Instagram (8 Posts com capa)
         fetch(apiInstagram).then(res => res.json()).then(data => {
             const container = document.getElementById('instagram-feed');
             container.innerHTML = '';
-            // Filtro rigoroso para mostrar 8 imagens válidas
-            data.filter(post => post.displayUrl && post.displayUrl.includes('http')).slice(0, 8).forEach(post => {
+            data.filter(post => post.displayUrl).slice(0, 8).forEach(post => {
                 container.innerHTML += `
-                    <a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden border group bg-gray-100">
-                        <img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.parentElement.style.display='none'">
+                    <a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden border group bg-gray-100 shadow-sm">
+                        <img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                     </a>`;
             });
         });
 
+        // Radar de Notícias com Redirecionamento
         function loadNews() {
             const container = document.getElementById('news-feed');
             const fifteenDaysAgo = new Date();
             fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
             const newsData = [
-                { date: "2026-03-04", source: "GE", text: "Decisão no Porco: Veja a provável escalação para o jogo contra o Novorizontino.", url: "#" },
-                { date: "2026-03-03", source: "GAZETA", text: "Novo reforço do Palmeiras já está no BID e pode estrear na final.", url: "#" },
-                { date: "2026-03-02", source: "UOL", text: "Abel Ferreira completa 4 anos de clube e recebe homenagem da diretoria.", url: "#" },
-                { date: "2026-02-27", source: "GE", text: "Palmeiras monitora situação de Jhon Arias para janela de meio de ano.", url: "#" },
-                { date: "2026-02-20", source: "LANCE", text: "Análise: A evolução tática do Verdão no campeonato Paulista.", url: "#" }
+                { date: "2026-03-04", source: "GE", text: "Decisão: Abel Ferreira define o Palmeiras para a final contra o Novorizontino.", url: "https://ge.globo.com/futebol/times/palmeiras/" },
+                { date: "2026-03-03", source: "UOL", text: "Bastidores: Leila Pereira detalha planos para o novo Mundial de Clubes.", url: "https://www.uol.com.br/esporte/futebol/times/palmeiras/" },
+                { date: "2026-03-02", source: "GAZETA", text: "Palmeiras atinge marca histórica de sócios-torcedores antes da final.", url: "https://www.gazetaesportiva.com/times/palmeiras/" },
+                { date: "2026-02-28", source: "LANCE", text: "Jhon Arias e Palmeiras: O que sabemos sobre a negociação até agora.", url: "https://www.lance.com.br/palmeiras/" },
+                { date: "2026-02-20", source: "UOL", text: "Análise: Como a base do Palmeiras salvou o início da temporada 2026.", url: "https://www.uol.com.br/esporte/" }
             ];
 
-            const filtered = newsData
+            const sorted = newsData
                 .filter(n => new Date(n.date) >= fifteenDaysAgo)
-                .sort((a, b) => new Date(b.date) - new Date(a.date)); // Mais recente no TOPO
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
 
             container.innerHTML = '';
-            filtered.forEach(n => {
-                const formattedDate = new Date(n.date).toLocaleDateString('pt-BR');
+            sorted.forEach(n => {
                 container.innerHTML += `
-                    <div class="border-b pb-3 group cursor-pointer hover:bg-green-50 p-2 rounded transition">
+                    <a href="${n.url}" target="_blank" class="block border-b pb-3 group hover:bg-green-50 p-2 rounded transition">
                         <div class="flex justify-between items-center mb-1">
                             <span class="text-[9px] font-bold text-white bg-palmeiras px-2 py-0.5 rounded uppercase">${n.source}</span>
-                            <span class="text-[9px] text-gray-400 font-bold">${formattedDate}</span>
+                            <span class="text-[9px] text-gray-400">${new Date(n.date).toLocaleDateString('pt-BR')}</span>
                         </div>
                         <p class="font-semibold text-sm leading-snug text-gray-800 group-hover:text-green-800">${n.text}</p>
-                    </div>`;
+                    </a>`;
             });
         }
 
+        // Calendário com Logos Corrigidos (Wikipedia)
         function loadMatches() {
             const carousel = document.getElementById('match-carousel');
             const matches = [
-                { data: "01/02", comp: "Paulista", op: "Botafogo-SP", logo: "https://upload.wikimedia.org/wikipedia/pt/d/d3/Botafogo_FC_SP.png", placar: "1 x 0", res: "D", local: "Santa Cruz" },
-                { data: "04/02", comp: "Brasileirão", op: "Vitória", logo: "https://upload.wikimedia.org/wikipedia/pt/b/bc/ECVitoria_2016.png", placar: "5 x 1", res: "V", local: "Arena Barueri" },
-                { data: "08/02", comp: "Paulista", op: "Corinthians", logo: "https://upload.wikimedia.org/wikipedia/pt/b/b4/Corinthians_simbolo.png", placar: "0 x 1", res: "V", local: "Neo Química Arena" },
-                { data: "12/02", comp: "Brasileirão", op: "Internacional", logo: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Escudo_do_Sport_Club_Internacional.svg", placar: "1 x 3", res: "V", local: "Beira-Rio" },
-                { data: "15/02", comp: "Paulista", op: "Guarani", logo: "https://upload.wikimedia.org/wikipedia/pt/3/38/Guarani_Futebol_Clube.png", placar: "1 x 1", res: "E", local: "Arena Barueri" },
-                { data: "21/02", comp: "Paulista", op: "Capivariano", logo: "https://upload.wikimedia.org/wikipedia/pt/0/03/Capivariano_Futebol_Clube.png", placar: "4 x 0", res: "V", local: "Arena Barueri" },
-                { data: "25/02", comp: "Brasileirão", op: "Fluminense", logo: "https://upload.wikimedia.org/wikipedia/pt/a/a8/Fluminense_FC_escudo.png", placar: "2 x 1", res: "V", local: "Arena Barueri" },
-                { data: "01/03", comp: "Paulista", op: "São Paulo", logo: "https://upload.wikimedia.org/wikipedia/pt/4/4b/S%C3%A3o_Paulo_Futebol_Clube.png", placar: "2 x 1", res: "V", local: "Arena Barueri" },
-                { data: "04/03", comp: "Paulista", op: "Novorizontino", logo: "https://upload.wikimedia.org/wikipedia/pt/8/89/Gremio_Novorizontino_SP.png", placar: "X", res: "NEXT", local: "Arena Barueri", prox: true }
+                { data: "01/02", op: "Botafogo-SP", logo: "https://upload.wikimedia.org/wikipedia/pt/d/d3/Botafogo_FC_SP.png", placar: "1 x 0", res: "D", local: "Santa Cruz" },
+                { data: "04/02", op: "Vitória", logo: "https://upload.wikimedia.org/wikipedia/pt/b/bc/ECVitoria_2016.png", placar: "5 x 1", res: "V", local: "Arena Barueri" },
+                { data: "08/02", op: "Corinthians", logo: "https://upload.wikimedia.org/wikipedia/pt/b/b4/Corinthians_simbolo.png", placar: "0 x 1", res: "V", local: "Neo Química" },
+                { data: "12/02", op: "Internacional", logo: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Escudo_do_Sport_Club_Internacional.svg", placar: "1 x 3", res: "V", local: "Beira-Rio" },
+                { data: "15/02", op: "Guarani", logo: "https://upload.wikimedia.org/wikipedia/pt/3/38/Guarani_Futebol_Clube.png", placar: "1 x 1", res: "E", local: "Arena Barueri" },
+                { data: "21/02", op: "Capivariano", logo: "https://upload.wikimedia.org/wikipedia/pt/0/03/Capivariano_Futebol_Clube.png", placar: "4 x 0", res: "V", local: "Arena Barueri" },
+                { data: "25/02", op: "Fluminense", logo: "https://upload.wikimedia.org/wikipedia/pt/a/a8/Fluminense_FC_escudo.png", placar: "2 x 1", res: "V", local: "Arena Barueri" },
+                { data: "01/03", op: "São Paulo", logo: "https://upload.wikimedia.org/wikipedia/pt/4/4b/S%C3%A3o_Paulo_Futebol_Clube.png", placar: "2 x 1", res: "V", local: "Allianz Parque" },
+                { data: "04/03", op: "Novorizontino", logo: "https://upload.wikimedia.org/wikipedia/pt/8/89/Gremio_Novorizontino_SP.png", placar: "X", res: "PRÓX", local: "Arena Barueri", prox: true }
             ];
 
             carousel.innerHTML = '';
             matches.forEach(m => {
-                const resColor = m.res === 'V' ? 'bg-green-600' : m.res === 'D' ? 'bg-red-600' : 'bg-gray-500';
+                const color = m.res === 'V' ? 'bg-green-600' : m.res === 'D' ? 'bg-red-600' : 'bg-gray-500';
                 carousel.innerHTML += `
-                    <div ${m.prox ? 'id="next-match"' : ''} class="min-w-[260px] snap-center p-5 rounded-2xl border-2 ${m.prox ? 'next-game-active shadow-xl' : 'bg-white border-gray-100'}">
-                        <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-3">
+                    <div ${m.prox ? 'id="next-match"' : ''} class="min-w-[250px] snap-center p-5 rounded-2xl border-2 ${m.prox ? 'next-game-active shadow-xl' : 'bg-white border-gray-100'}">
+                        <div class="flex justify-between text-[9px] font-bold text-gray-400 mb-4 uppercase">
                             <span>${m.data}</span>
-                            <span>${m.comp.toUpperCase()}</span>
+                            <span>Paulista 2026</span>
                         </div>
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="text-center w-1/3">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" class="h-10 mx-auto">
-                                <p class="text-[9px] mt-1 font-bold text-palmeiras italic">SEP</p>
-                            </div>
-                            <div class="text-xl font-black text-gray-800">${m.placar}</div>
-                            <div class="text-center w-1/3">
-                                <img src="${m.logo}" class="h-10 mx-auto object-contain" onerror="this.src='https://via.placeholder.com/40?text=Logo'">
-                                <p class="text-[9px] mt-1 font-bold text-gray-500 italic">${m.op.substring(0,3).toUpperCase()}</p>
-                            </div>
+                        <div class="flex items-center justify-around mb-4">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" class="h-9">
+                            <span class="text-xl font-black">${m.placar}</span>
+                            <img src="${m.logo}" class="h-9 object-contain">
                         </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-gray-100">
-                            <span class="text-[10px] text-gray-400 italic"><i class="fas fa-location-dot"></i> ${m.local}</span>
-                            <span class="text-[9px] px-2 py-0.5 rounded text-white font-bold ${m.prox ? 'bg-palmeiras animate-pulse' : resColor}">${m.res === 'NEXT' ? 'PRÓXIMO' : 'RESULTADO'}</span>
+                        <div class="flex justify-between items-center pt-2 border-t text-[10px]">
+                            <span class="text-gray-400 italic">${m.local}</span>
+                            <span class="px-2 py-0.5 rounded text-white font-bold ${m.prox ? 'bg-palmeiras' : color}">${m.res === 'PRÓX' ? 'FINAL' : 'RESULTADO'}</span>
                         </div>
                     </div>`;
             });
 
             setTimeout(() => {
-                const nextMatch = document.getElementById('next-match');
-                if (nextMatch) nextMatch.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                const n = document.getElementById('next-match');
+                if(n) n.scrollIntoView({ behavior: 'smooth', inline: 'center' });
             }, 1000);
         }
 
-        function scrollCarousel(dist) {
-            document.getElementById('match-carousel').scrollBy({ left: dist, behavior: 'smooth' });
-        }
+        function scrollCarousel(dist) { document.getElementById('match-carousel').scrollBy({ left: dist, behavior: 'smooth' }); }
 
         loadMatches();
         loadNews();
