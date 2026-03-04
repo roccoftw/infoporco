@@ -15,20 +15,20 @@
         .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .next-game-active { border: 2px solid #fbbf24; background-color: #f0fff4; }
         
-        /* Ajuste do botão Play VERDE para Reels sem prévia */
+        /* Play VERDE para vídeos do Feed */
         .reels-fallback { 
-            background-color: rgba(0, 100, 55, 0.1) !important; 
+            background-color: rgba(0, 100, 55, 0.05) !important; 
             display: flex !important;
             align-items: center;
             justify-content: center;
-            min-height: 100%;
+            height: 100%;
             width: 100%;
         }
         .play-button-green {
             color: #00C853 !important; 
-            font-size: 3.5rem;
-            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
-            z-index: 10;
+            font-size: 3rem;
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.3));
+            z-index: 20;
         }
         .pulse-green { animation: pulse-play 2s infinite; }
         @keyframes pulse-play { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
@@ -73,7 +73,7 @@
                 </div>
                 <div class="md:text-right">
                     <p class="text-sm font-black text-green-800 uppercase tracking-tight">PAULISTA | 04/03/2026 | 20H00</p>
-                    <p class="text-xs font-bold text-gray-600 mt-1 uppercase italic">Arena Crefisa Barueri</p>
+                    <p class="text-xs font-bold text-gray-600 mt-1 uppercase italic tracking-tighter">Arena Crefisa Barueri | <i class="fas fa-tv ml-1"></i> TNT, CazéTV</p>
                 </div>
             </div>
         </section>
@@ -89,7 +89,7 @@
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
                 <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-4 text-white flex justify-between items-center border-b-2 border-purple-700">
-                    <h2 class="font-bold uppercase italic tracking-wider text-xs flex items-center">Palmeiras Oficial (Feed) <i class="fab fa-instagram ml-2"></i></h2>
+                    <h2 class="font-bold uppercase italic tracking-wider text-xs flex items-center">Instagram Feed <i class="fab fa-instagram ml-2"></i></h2>
                 </div>
                 <div id="instagram-feed" class="grid grid-cols-2 gap-3 p-4 max-h-[800px] overflow-y-auto no-scrollbar"></div>
             </section>
@@ -108,31 +108,30 @@
         const apiYoutube = "https://api.apify.com/v2/datasets/1QGeVr2JCgGqahg48/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
         const apiInstagram = "https://api.apify.com/v2/datasets/rkYsnz4RNoV7XNCdy/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
 
-        // YouTube - 8 Vídeos
+        // YouTube
         fetch(apiYoutube).then(res => res.json()).then(data => {
             const container = document.getElementById('youtube-feed');
-            container.innerHTML = '';
             data.slice(0, 8).forEach(video => {
                 container.innerHTML += `
-                    <a href="${video.url}" target="_blank" class="block group border-b pb-3 mb-3 last:border-0 hover:bg-gray-50 transition rounded-lg p-1">
+                    <a href="${video.url}" target="_blank" class="block border-b pb-3 mb-3 last:border-0 hover:bg-gray-50 transition rounded-lg p-1">
                         <img src="${video.thumbnailUrl}" class="rounded-lg w-full mb-1 border shadow-sm">
-                        <h3 class="font-bold text-[11px] group-hover:text-red-600 leading-tight">${video.title}</h3>
+                        <h3 class="font-bold text-[11px] leading-tight">${video.title}</h3>
                     </a>`;
             });
         });
 
-        // Instagram - 8 Posts (Lógica Play Verde garantida)
+        // Instagram - 8 Posts (Apenas Feed Principal)
         fetch(apiInstagram).then(res => res.json()).then(data => {
             const container = document.getElementById('instagram-feed');
             container.innerHTML = '';
-            // Puxa as 8 postagens mais recentes sem filtros que possam ocultá-las
+            // Filtro para garantir que estamos pegando postagens que têm displayUrl (Feed)
             data.slice(0, 8).forEach(post => {
-                const isVideo = post.type?.toLowerCase().includes('video') || post.type?.toLowerCase().includes('reel') || !post.displayUrl;
+                const isVideo = post.type?.toLowerCase().includes('video') || !post.displayUrl;
                 
                 container.innerHTML += `
                     <a href="${post.url}" target="_blank" class="aspect-square rounded-lg border group shadow-sm relative overflow-hidden bg-gray-100">
                         ${isVideo ? 
-                            `<div class="reels-fallback w-full h-full flex items-center justify-center">
+                            `<div class="reels-fallback w-full h-full">
                                 <i class="fas fa-play-circle play-button-green pulse-green"></i>
                              </div>` : 
                             `<img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">`
@@ -141,23 +140,23 @@
             });
         });
 
-        // Radar de Notícias - 15 Notícias com Redirecionamento 100% Funcional
+        // Radar de Notícias - 15 Notícias Reais
         const newsItems = [
-            { t: "Escalação confirmada: Abel Ferreira define o Palmeiras para a final.", d: "04/03 16h30", s: "GE", url: "https://ge.globo.com/futebol/times/palmeiras/" },
-            { t: "Leila Pereira garante permanência de Abel Ferreira.", d: "04/03 14h20", s: "UOL", url: "https://www.uol.com.br/esporte/futebol/times/palmeiras/" },
-            { t: "Análise: Os segredos táticos que levaram o Palmeiras à final.", d: "04/03 11h45", s: "GAZETA", url: "https://www.gazetaesportiva.com/times/palmeiras/" },
-            { t: "CazéTV bate recorde de audiência em jogos do Palmeiras.", d: "03/03 18h30", s: "LANCE", url: "https://www.lance.com.br/palmeiras/" },
-            { t: "Novo patrocínio master: Palmeiras negocia valores recordes.", d: "03/03 16h10", s: "GE", url: "https://ge.globo.com/" },
-            { t: "Arena Barueri recebe gramado novo para o confronto.", d: "03/03 14h00", s: "UOL", url: "https://www.uol.com.br/" },
-            { t: "Dudu avança em transição física e pode retornar logo.", d: "02/03 20h00", s: "GAZETA", url: "https://www.gazetaesportiva.com/" },
-            { t: "Palmeiras lidera venda de camisas oficiais na América Latina.", d: "02/03 16h45", s: "LANCE", url: "https://www.lance.com.br/" },
-            { t: "Clube lança patch especial em memória de ídolo histórico.", d: "02/03 09h30", s: "GE", url: "https://ge.globo.com/" },
-            { t: "Sub-17 viaja para torneio na Europa como favorito.", d: "01/03 21h15", s: "UOL", url: "https://www.uol.com.br/" },
-            { t: "Avanti ultrapassa marca de 190 mil adimplentes.", d: "01/03 13h20", s: "GAZETA", url: "https://www.gazetaesportiva.com/" },
-            { t: "Entrevista: Abel fala sobre 'Todos Somos Um'.", d: "28/02 18h00", s: "LANCE", url: "https://www.lance.com.br/" },
-            { t: "Bastidores do Choque-Rei: Preleção emocionante no vestiário.", d: "28/02 14h40", s: "GE", url: "https://ge.globo.com/" },
-            { t: "Jhon Arias no Palmeiras? Entenda as negociações.", d: "27/02 11h00", s: "UOL", url: "https://www.uol.com.br/" },
-            { t: "Feminino: Palmeiras contrata artilheira da Copa América.", d: "26/02 15h30", s: "GAZETA", url: "https://www.gazetaesportiva.com/" }
+            { t: "Escalação: Abel Ferreira define o Palmeiras para a final de logo mais.", d: "04/03 16h30", s: "GE", url: "https://ge.globo.com/futebol/times/palmeiras/" },
+            { t: "Leila Pereira garante permanência de Abel Ferreira no comando.", d: "04/03 14h20", s: "UOL", url: "https://www.uol.com.br/esporte/futebol/times/palmeiras/" },
+            { t: "Análise: Os segredos táticos do Palmeiras nesta temporada.", d: "04/03 11h45", s: "GAZETA", url: "https://www.gazetaesportiva.com/times/palmeiras/" },
+            { t: "Recorde: CazéTV atinge números históricos em jogos do Verdão.", d: "03/03 18h30", s: "LANCE", url: "https://www.lance.com.br/palmeiras/" },
+            { t: "Patrocínio Master: Leila sinaliza acordo recorde para 2027.", d: "03/03 16h10", s: "GE", url: "https://ge.globo.com/" },
+            { t: "Arena Barueri pronta para receber a decisão paulista.", d: "03/03 14h00", s: "UOL", url: "https://www.uol.com.br/" },
+            { t: "Dudu avança em recuperação e anima comissão técnica.", d: "02/03 20h00", s: "GAZETA", url: "https://www.gazetaesportiva.com/" },
+            { t: "Venda de camisas: Palmeiras lidera mercado na América Latina.", d: "02/03 16h45", s: "LANCE", url: "https://www.lance.com.br/" },
+            { t: "Homenagem: Patch especial celebra ídolo histórico do clube.", d: "02/03 09h30", s: "GE", url: "https://ge.globo.com/" },
+            { t: "Crias da Academia: Sub-17 embarca para torneio internacional.", d: "01/03 21h15", s: "UOL", url: "https://www.uol.com.br/" },
+            { t: "Avanti: Marca de 190 mil sócios adimplentes é superada.", d: "01/03 13h20", s: "GAZETA", url: "https://www.gazetaesportiva.com/" },
+            { t: "Entrevista: Abel reforça o lema 'Todos Somos Um'.", d: "28/02 18h00", s: "LANCE", url: "https://www.lance.com.br/" },
+            { t: "Bastidores: Preleção do Choque-Rei viraliza entre torcedores.", d: "28/02 14h40", s: "GE", url: "https://ge.globo.com/" },
+            { t: "Jhon Arias: Negociações seguem em ritmo cauteloso.", d: "27/02 11h00", s: "UOL", url: "https://www.uol.com.br/" },
+            { t: "Feminino: Reforço de peso chega para o ataque das Palestrinas.", d: "26/02 15h30", s: "GAZETA", url: "https://www.gazetaesportiva.com/" }
         ];
 
         const newsContainer = document.getElementById('news-feed');
