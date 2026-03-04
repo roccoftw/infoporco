@@ -13,7 +13,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .next-game-active { border: 3px solid #006437; background-color: #f0fff4; transform: scale(1.02); }
+        .next-game-active { border: 3px solid #006437; background-color: #f0fff4; transform: scale(1.05); z-index: 10; }
     </style>
 </head>
 <body class="pb-10">
@@ -24,83 +24,59 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" alt="Logo Palmeiras" class="h-12 w-12">
                 <h1 class="text-2xl md:text-3xl font-black italic tracking-tighter">INFO PORCO</h1>
             </div>
-            <div class="hidden md:block text-right">
+            <div class="text-right">
                 <p id="clock" class="text-sm font-mono opacity-80"></p>
-                <span class="bg-yellow-500 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded">OFFICIAL DATA FEED</span>
+                <span class="bg-yellow-500 text-green-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Feed Atualizado</span>
             </div>
         </div>
     </header>
 
     <main class="container mx-auto py-6 px-4">
         
-        <section class="mb-8 bg-white p-6 rounded-2xl card-shadow relative">
-            <div class="flex items-center mb-4 space-x-2">
+        <section class="mb-10 bg-white p-6 rounded-2xl card-shadow relative overflow-hidden">
+            <div class="flex items-center mb-6 space-x-2">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" class="h-6 w-6">
-                <h2 class="text-xl font-bold text-palmeiras uppercase">Agenda & Resultados</h2>
+                <h2 class="text-xl font-bold text-palmeiras uppercase tracking-tight">Linha do Tempo: Últimos 8 Jogos + Próximo</h2>
             </div>
             
-            <button onclick="scrollCarousel(-250)" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 shadow-lg rounded-full p-3 text-palmeiras hover:bg-palmeiras hover:text-white transition">
+            <button onclick="scrollCarousel(-300)" class="absolute left-2 top-[60%] -translate-y-1/2 z-20 bg-white/90 shadow-lg rounded-full p-3 text-palmeiras hover:bg-palmeiras hover:text-white transition">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button onclick="scrollCarousel(250)" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 shadow-lg rounded-full p-3 text-palmeiras hover:bg-palmeiras hover:text-white transition">
+            <button onclick="scrollCarousel(300)" class="absolute right-2 top-[60%] -translate-y-1/2 z-20 bg-white/90 shadow-lg rounded-full p-3 text-palmeiras hover:bg-palmeiras hover:text-white transition">
                 <i class="fas fa-chevron-right"></i>
             </button>
 
-            <div id="match-carousel" class="flex overflow-x-auto space-x-4 pb-4 no-scrollbar snap-x scroll-smooth items-center px-10">
-                <p class="text-gray-400 italic w-full text-center">Sincronizando com Allianz Parque...</p>
-            </div>
+            <div id="match-carousel" class="flex overflow-x-auto space-x-6 pb-6 pt-2 no-scrollbar snap-x scroll-smooth px-4">
+                </div>
         </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
-                <div class="bg-[#FF0000] p-4 flex justify-between items-center text-white">
-                    <h2 class="font-bold uppercase italic tracking-wider flex items-center">
-                        TV Palmeiras Sportingbet <i class="fab fa-youtube ml-2"></i>
-                    </h2>
+                <div class="bg-red-600 p-4 flex justify-between items-center text-white">
+                    <h2 class="font-bold uppercase italic tracking-wider flex items-center">TV Palmeiras <i class="fab fa-youtube ml-2"></i></h2>
                 </div>
-                <div id="youtube-feed" class="p-4 space-y-6 max-h-[700px] overflow-y-auto">
-                    <div class="animate-pulse flex flex-col space-y-4">
-                        <div class="bg-gray-200 h-40 rounded"></div>
-                        <div class="bg-gray-200 h-4 w-3/4 rounded"></div>
-                    </div>
-                </div>
+                <div id="youtube-feed" class="p-4 space-y-4 max-h-[650px] overflow-y-auto"></div>
             </section>
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
                 <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-4 flex justify-between items-center text-white">
-                    <h2 class="font-bold uppercase italic tracking-wider flex items-center">
-                        Palmeiras Oficial <i class="fab fa-instagram ml-2"></i>
-                    </h2>
+                    <h2 class="font-bold uppercase italic tracking-wider flex items-center">Instagram Feed <i class="fab fa-instagram ml-2"></i></h2>
                 </div>
-                <div id="instagram-feed" class="grid grid-cols-2 gap-2 p-4 max-h-[700px] overflow-y-auto">
-                    </div>
+                <div id="instagram-feed" class="grid grid-cols-2 gap-2 p-4 max-h-[650px] overflow-y-auto"></div>
             </section>
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden border-t-4 border-palmeiras">
                 <div class="p-4 flex justify-between items-center bg-gray-50 border-b">
-                    <h2 class="font-bold text-palmeiras uppercase italic tracking-wider">Radar de Notícias</h2>
-                    <i class="fas fa-newspaper text-xl text-palmeiras"></i>
+                    <h2 class="font-bold text-palmeiras uppercase italic tracking-wider">Radar (Últimos 7 dias)</h2>
+                    <i class="fas fa-calendar-check text-palmeiras"></i>
                 </div>
                 <div id="news-feed" class="p-4 space-y-4">
-                    <div class="border-b pb-3 group cursor-pointer">
-                        <span class="text-[10px] font-bold text-white bg-green-700 px-2 py-0.5 rounded">GE.GLOBO</span>
-                        <p class="mt-1 font-semibold text-sm group-hover:text-green-700 transition">Palmeiras finaliza preparação para decisão; Abel faz mistério na escalação.</p>
-                        <p class="text-[10px] text-gray-400 mt-1 uppercase">Há 2 horas</p>
                     </div>
-                    <div class="border-b pb-3 group cursor-pointer">
-                        <span class="text-[10px] font-bold text-white bg-blue-800 px-2 py-0.5 rounded">UOL ESPORTE</span>
-                        <p class="mt-1 font-semibold text-sm group-hover:text-blue-800 transition">Leila Pereira confirma renovação de patrocínio Master para 2027.</p>
-                        <p class="text-[10px] text-gray-400 mt-1 uppercase">Há 5 horas</p>
-                    </div>
-                </div>
             </section>
-
         </div>
     </main>
 
     <script>
-        // Relógio Real-time
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleString('pt-BR');
@@ -108,89 +84,81 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // APIs do Apify
         const apiYoutube = "https://api.apify.com/v2/datasets/1QGeVr2JCgGqahg48/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
         const apiInstagram = "https://api.apify.com/v2/datasets/rkYsnz4RNoV7XNCdy/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
 
-        // 1. YouTube Fetch
-        fetch(apiYoutube)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('youtube-feed');
-                container.innerHTML = '';
-                data.slice(0, 8).forEach(video => {
-                    const videoUrl = video.url || `https://www.youtube.com/watch?v=${video.id}`;
-                    container.innerHTML += `
-                        <a href="${videoUrl}" target="_blank" class="block group">
-                            <div class="relative overflow-hidden rounded-xl shadow-sm">
-                                <img src="${video.thumbnailUrl}" class="w-full group-hover:scale-105 transition duration-300">
-                                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
-                                <div class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded">OFICIAL</div>
-                            </div>
-                            <h3 class="font-bold text-sm mt-2 leading-tight group-hover:text-palmeiras">${video.title}</h3>
-                        </a>
-                    `;
-                });
-            }).catch(e => console.error("Erro YouTube:", e));
+        // 1. YouTube
+        fetch(apiYoutube).then(res => res.json()).then(data => {
+            const container = document.getElementById('youtube-feed');
+            container.innerHTML = '';
+            data.slice(0, 6).forEach(video => {
+                container.innerHTML += `
+                    <a href="${video.url}" target="_blank" class="block group border-b pb-3 mb-3 last:border-0">
+                        <img src="${video.thumbnailUrl}" class="rounded-lg w-full group-hover:opacity-80 transition shadow-sm">
+                        <h3 class="font-bold text-sm mt-2 leading-tight group-hover:text-red-600">${video.title}</h3>
+                    </a>`;
+            });
+        });
 
-        // 2. Instagram Fetch
-        fetch(apiInstagram)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('instagram-feed');
-                container.innerHTML = '';
-                data.slice(0, 10).forEach(post => {
-                    container.innerHTML += `
-                        <a href="${post.url}" target="_blank" class="aspect-square bg-gray-100 rounded-lg overflow-hidden group relative border">
-                            <img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:opacity-80 transition duration-300">
-                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                <i class="fab fa-instagram text-white text-2xl shadow-lg"></i>
-                            </div>
-                        </a>
-                    `;
-                });
-            }).catch(e => console.error("Erro Instagram:", e));
+        // 2. Instagram (Filtro para evitar Reels sem capa)
+        fetch(apiInstagram).then(res => res.json()).then(data => {
+            const container = document.getElementById('instagram-feed');
+            container.innerHTML = '';
+            // Filtra apenas posts que não são explicitamente marcados como video curto ou sem displayUrl
+            data.filter(post => post.displayUrl && !post.type?.includes('video')).slice(0, 10).forEach(post => {
+                container.innerHTML += `
+                    <a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden border group">
+                        <img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </a>`;
+            });
+        });
 
-        // 3. Calendário (Mock 7 jogos + Próximo)
+        // 3. Calendário Oficial (Baseado nos anexos)
         function loadMatches() {
             const carousel = document.getElementById('match-carousel');
             const matches = [
-                {p: "SEP 1 x 0 SAN", local: "Allianz Parque", r: "V"},
-                {p: "BOT 0 x 1 SEP", local: "Ribeirão Preto", r: "V"},
-                {p: "SEP 1 x 1 GUA", local: "Allianz Parque", r: "E"},
-                {p: "CAP 0 x 4 SEP", local: "Capivari", r: "V"},
-                {p: "SEP 2 x 1 FLU", local: "Arena Barueri", r: "V"},
-                {p: "SEP 2 x 1 SPFC", local: "Allianz Parque", r: "V"},
-                {p: "NOV 0 x 1 SEP", local: "Novo Horizonte", r: "V"},
-                {p: "PALMEIRAS x NOVORIZONTINO", local: "Arena Barueri", r: "FINAL", prox: true}
+                { data: "01/02", comp: "Paulista", op: "Botafogo-SP", logo: "https://upload.wikimedia.org/wikipedia/pt/d/d3/Botafogo_FC_SP.png", placar: "1 x 0", res: "D", local: "Santa Cruz" },
+                { data: "04/02", comp: "Brasileirão", op: "Vitória", logo: "https://upload.wikimedia.org/wikipedia/pt/b/bc/ECVitoria_2016.png", placar: "5 x 1", res: "V", local: "Arena Barueri" },
+                { data: "08/02", comp: "Paulista", op: "Corinthians", logo: "https://upload.wikimedia.org/wikipedia/pt/b/b4/Corinthians_simbolo.png", placar: "0 x 1", res: "V", local: "Neo Química Arena" },
+                { data: "12/02", comp: "Brasileirão", op: "Internacional", logo: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Escudo_do_Sport_Club_Internacional.svg", placar: "1 x 3", res: "V", local: "Beira-Rio" },
+                { data: "15/02", comp: "Paulista", op: "Guarani", logo: "https://upload.wikimedia.org/wikipedia/pt/3/38/Guarani_Futebol_Clube.png", placar: "1 x 1", res: "E", local: "Arena Barueri" },
+                { data: "21/02", comp: "Paulista", op: "Capivariano", logo: "https://upload.wikimedia.org/wikipedia/pt/0/03/Capivariano_Futebol_Clube.png", placar: "4 x 0", res: "V", local: "Arena Barueri" },
+                { data: "25/02", comp: "Brasileirão", op: "Fluminense", logo: "https://upload.wikimedia.org/wikipedia/pt/a/a8/Fluminense_FC_escudo.png", placar: "2 x 1", res: "V", local: "Arena Barueri" },
+                { data: "01/03", comp: "Paulista", op: "São Paulo", logo: "https://upload.wikimedia.org/wikipedia/pt/4/4b/S%C3%A3o_Paulo_Futebol_Clube.png", placar: "2 x 1", res: "V", local: "Arena Barueri" },
+                { data: "04/03", comp: "Paulista (Final)", op: "Novorizontino", logo: "https://upload.wikimedia.org/wikipedia/pt/8/89/Gremio_Novorizontino_SP.png", placar: "X", res: "NEXT", local: "Arena Barueri", prox: true }
             ];
 
             carousel.innerHTML = '';
             matches.forEach(m => {
-                const isNext = m.prox;
+                const resClass = m.res === 'V' ? 'bg-green-600' : m.res === 'D' ? 'bg-red-600' : 'bg-gray-500';
                 carousel.innerHTML += `
-                    <div ${isNext ? 'id="next-game-card"' : ''} class="min-w-[240px] snap-center p-5 rounded-2xl ${isNext ? 'next-game-active shadow-xl' : 'bg-gray-50 border border-gray-200'}">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-[9px] font-black px-2 py-0.5 rounded ${isNext ? 'bg-palmeiras text-white' : 'bg-gray-200 text-gray-600'}">PAULISTA 2026</span>
-                            <i class="fas fa-shield-alt ${isNext ? 'text-palmeiras' : 'text-gray-300'}"></i>
+                    <div ${m.prox ? 'id="next-match"' : ''} class="min-w-[260px] snap-center p-5 rounded-2xl border ${m.prox ? 'next-game-active shadow-2xl' : 'bg-gray-50 border-gray-200'}">
+                        <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-3">
+                            <span>${m.data}</span>
+                            <span>${m.comp.toUpperCase()}</span>
                         </div>
-                        <h4 class="font-black text-sm text-gray-800 mb-1">${m.p}</h4>
-                        <p class="text-[11px] text-gray-500 mb-3 uppercase tracking-tighter"><i class="fas fa-location-dot mr-1"></i>${m.local}</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold ${m.r === 'V' ? 'text-green-600' : 'text-palmeiras'}">${isNext ? 'PRÓXIMO' : 'RESULTADO: ' + m.r}</span>
-                            ${isNext ? '<span class="animate-pulse flex h-2 w-2 rounded-full bg-red-500"></span>' : ''}
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-center w-1/3">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" class="h-10 mx-auto">
+                                <p class="text-[9px] mt-1 font-bold text-palmeiras">SEP</p>
+                            </div>
+                            <div class="text-xl font-black text-gray-800">${m.placar}</div>
+                            <div class="text-center w-1/3">
+                                <img src="${m.logo}" class="h-10 mx-auto">
+                                <p class="text-[9px] mt-1 font-bold text-gray-500">${m.op.substring(0,3).toUpperCase()}</p>
+                            </div>
                         </div>
-                    </div>
-                `;
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                            <span class="text-[10px] text-gray-400 italic"><i class="fas fa-location-dot"></i> ${m.local}</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded text-white font-bold ${m.prox ? 'bg-palmeiras animate-pulse' : resClass}">${m.res === 'NEXT' ? 'PRÓXIMO' : 'RESULTADO'}</span>
+                        </div>
+                    </div>`;
             });
 
-            // Focar no próximo jogo ao abrir
             setTimeout(() => {
-                const nextMatch = document.getElementById('next-game-card');
-                if (nextMatch) {
-                    nextMatch.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                }
-            }, 800);
+                const nextMatch = document.getElementById('next-match');
+                if (nextMatch) nextMatch.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }, 1000);
         }
 
         function scrollCarousel(dist) {
