@@ -7,55 +7,150 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #f3f4f6; }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .bg-palmeiras { background-color: #006437; }
         .text-palmeiras { color: #006437; }
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        /* Esconder scrollbar do carrossel */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
 
-    <header class="bg-palmeiras text-white p-6 shadow-lg">
+    <header class="bg-palmeiras text-white p-4 shadow-xl border-b-4 border-yellow-500">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-3xl font-bold italic">INFO PORCO 🐷</h1>
-            <span id="last-update" class="text-sm opacity-80">Atualizado em: --/--/--</span>
+            <div class="flex items-center space-x-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" alt="Logo Palmeiras" class="h-14 w-14">
+                <h1 class="text-3xl font-black tracking-tighter italic">INFO PORCO</h1>
+            </div>
+            <div class="text-right">
+                <p id="clock" class="text-sm font-mono"></p>
+                <span class="bg-yellow-500 text-green-900 text-[10px] font-bold px-2 py-1 rounded">LIVE DASHBOARD</span>
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <main class="container mx-auto py-6 px-4">
         
-        <section class="bg-white rounded-xl shadow-md p-5">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-palmeiras"><i class="fab fa-youtube mr-2"></i> TV Palmeiras</h2>
-            <div id="youtube-feed" class="space-y-4">
-                <p class="text-gray-500 italic text-sm text-center">Carregando vídeos...</p>
+        <section class="mb-8 bg-white p-6 rounded-2xl card-shadow">
+            <div class="flex items-center mb-4 space-x-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" class="h-6 w-6">
+                <h2 class="text-xl font-bold text-palmeiras uppercase tracking-tight">Agenda & Resultados</h2>
+            </div>
+            <div id="match-carousel" class="flex overflow-x-auto space-x-4 pb-4 no-scrollbar snap-x">
+                <p class="text-gray-400 italic">Carregando calendário...</p>
             </div>
         </section>
 
-        <section class="bg-white rounded-xl shadow-md p-5">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-palmeiras"><i class="fas fa-calendar-alt mr-2"></i> Agenda & Resultados</h2>
-            <div id="match-calendar" class="space-y-3">
-                <div class="bg-green-50 p-3 rounded-lg border-l-4 border-green-600 mb-4">
-                    <p class="text-xs font-bold uppercase text-green-700">Próximo Jogo</p>
-                    <p class="font-bold">Palmeiras x Novorizontino</p>
-                    <p class="text-xs text-gray-600 italic">Hoje, 20h00 - Arena Barueri</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <section class="bg-white rounded-2xl card-shadow overflow-hidden">
+                <div class="bg-red-600 p-4 flex justify-between items-center text-white">
+                    <h2 class="font-bold uppercase italic tracking-wider">TV Palmeiras Sportingbet</h2>
+                    <i class="fab fa-youtube text-2xl"></i>
                 </div>
-                <div id="last-results" class="text-sm space-y-2">
-                    <p class="text-gray-500 italic text-center text-sm">Buscando placares...</p>
+                <div id="youtube-feed" class="p-4 space-y-4 max-h-[600px] overflow-y-auto">
+                    </div>
+            </section>
+
+            <section class="bg-white rounded-2xl card-shadow overflow-hidden">
+                <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-4 flex justify-between items-center text-white">
+                    <h2 class="font-bold uppercase italic tracking-wider">Palmeiras Oficial</h2>
+                    <i class="fab fa-instagram text-2xl"></i>
                 </div>
-            </div>
-        </section>
+                <div id="instagram-feed" class="grid grid-cols-2 gap-2 p-4 max-h-[600px] overflow-y-auto text-center">
+                    </div>
+            </section>
 
-        <section class="bg-white rounded-xl shadow-md p-5">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2 text-palmeiras"><i class="fas fa-newspaper mr-2"></i> Radar de Notícias</h2>
-            <div id="news-feed" class="space-y-4 text-sm">
-                <p class="text-gray-500 italic text-center">Varrendo os portais...</p>
-            </div>
-        </section>
+            <section class="bg-white rounded-2xl card-shadow overflow-hidden border-l-4 border-palmeiras">
+                <div class="p-4 flex justify-between items-center bg-gray-50 border-b">
+                    <h2 class="font-bold text-palmeiras uppercase italic tracking-wider">Radar de Notícias</h2>
+                    <i class="fas fa-newspaper text-xl text-palmeiras"></i>
+                </div>
+                <div id="news-feed" class="p-4 space-y-4">
+                    <div class="border-b pb-2">
+                        <span class="text-[10px] font-bold text-white bg-green-700 px-2 py-0.5 rounded">GE.GLOBO</span>
+                        <p class="mt-1 font-semibold text-sm hover:text-green-700 cursor-pointer">Palmeiras inicia preparação para a final com Jhon Arias entre os titulares.</p>
+                    </div>
+                </div>
+            </section>
 
+        </div>
     </main>
 
     <script>
-        // Aqui entraremos com a mágica do Apify no próximo passo
-        console.log("Dashboard pronto para receber os dados do Apify.");
+        // Função para formatar o relógio
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleString('pt-BR');
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // URLs das suas APIs do Apify
+        const apiYoutube = "https://api.apify.com/v2/datasets/1QGeVr2JCgGqahg48/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
+        const apiInstagram = "https://api.apify.com/v2/datasets/rkYsnz4RNoV7XNCdy/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
+
+        // Fetch YouTube
+        fetch(apiYoutube)
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('youtube-feed');
+                container.innerHTML = '';
+                data.slice(0, 5).forEach(video => {
+                    container.innerHTML += `
+                        <div class="group cursor-pointer">
+                            <img src="${video.thumbnailUrl}" class="rounded-lg w-full mb-2 group-hover:opacity-80 transition">
+                            <h3 class="font-bold text-sm leading-tight">${video.title}</h3>
+                            <p class="text-xs text-gray-500 mt-1 uppercase">${video.viewCount} views</p>
+                        </div>
+                    `;
+                });
+            });
+
+        // Fetch Instagram
+        fetch(apiInstagram)
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('instagram-feed');
+                container.innerHTML = '';
+                data.slice(0, 6).forEach(post => {
+                    container.innerHTML += `
+                        <div class="aspect-square bg-gray-200 rounded-md overflow-hidden border">
+                            <img src="${post.displayUrl}" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                        </div>
+                    `;
+                });
+            });
+
+        // Mock do Carrossel (Em breve integrado com Scraper do site oficial)
+        function loadMatches() {
+            const carousel = document.getElementById('match-carousel');
+            const matches = [
+                {p: "Palmeiras 1x0 Santos", local: "Allianz Parque", r: "V"},
+                {p: "Botafogo-SP 0x1 Palmeiras", local: "Ribeirão Preto", r: "V"},
+                {p: "Palmeiras 1x1 Guarani", local: "Allianz Parque", r: "E"},
+                {p: "Capivariano 0x4 Palmeiras", local: "Capivari", r: "V"},
+                {p: "Palmeiras 2x1 Fluminense", local: "Arena Barueri", r: "V"},
+                {p: "Palmeiras 2x1 São Paulo", local: "Allianz Parque", r: "V"},
+                {p: "Novorizontino 0x1 Palmeiras", local: "Novo Horizonte", r: "V"},
+                {p: "Palmeiras x Novorizontino", local: "Arena Barueri", r: "Próximo", prox: true}
+            ];
+
+            carousel.innerHTML = '';
+            matches.forEach(m => {
+                carousel.innerHTML += `
+                    <div class="min-w-[200px] snap-start border ${m.prox ? 'border-palmeiras bg-green-50' : 'bg-white'} p-4 rounded-xl shadow-sm">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${m.prox ? 'Final - Ida' : 'Paulista 2026'}</p>
+                        <h4 class="font-bold text-sm my-1">${m.p}</h4>
+                        <p class="text-xs text-gray-500"><i class="fas fa-map-marker-alt mr-1"></i>${m.local}</p>
+                        ${m.prox ? '<span class="text-[10px] text-palmeiras font-bold underline">VER INGRESSOS</span>' : ''}
+                    </div>
+                `;
+            });
+        }
+        loadMatches();
     </script>
 </body>
 </html>
