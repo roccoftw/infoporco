@@ -25,6 +25,8 @@
         .g-sula { border-left: 4px solid #34a853; }        /* G12 - Sul-Americana */
         .z-rebaixamento { border-left: 4px solid #ea4335; } /* Z4 - Rebaixamento */
         .pos-sep { background-color: #e8f5e9 !important; font-weight: bold; }
+        .loading-spinner { display: inline-block; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="pb-10">
@@ -88,8 +90,15 @@
             </section>
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden border-t-4 border-gray-800">
-                <div class="p-3 flex justify-between items-center bg-gray-50 border-b"><h2 class="font-bold text-gray-800 uppercase italic text-[10px]">Tabela Brasileirão</h2><i class="fas fa-list-ol"></i></div>
-                <div class="max-h-[700px] overflow-y-auto no-scrollbar">
+                <div class="p-3 flex justify-between items-center bg-gray-50 border-b">
+                    <h2 class="font-bold text-gray-800 uppercase italic text-[10px]">Tabela Brasileirão</h2>
+                    <i class="fas fa-list-ol"></i>
+                </div>
+                <div id="loading-table" class="p-4 text-center">
+                    <i class="fas fa-spinner loading-spinner text-gray-400"></i>
+                    <p class="text-xs text-gray-500 mt-2">Carregando tabela...</p>
+                </div>
+                <div class="max-h-[700px] overflow-y-auto no-scrollbar" id="table-container" style="display: none;">
                     <table class="w-full text-center table-brasileirao">
                         <thead>
                             <tr>
@@ -100,7 +109,7 @@
                             </tr>
                         </thead>
                         <tbody id="brasileirao-body">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -109,7 +118,7 @@
     </main>
 
     <main id="tab-calendar" class="container mx-auto py-6 px-4 hidden">
-        </main>
+    </main>
 
     <script>
         function switchTab(t) {
@@ -122,54 +131,99 @@
         const apiYoutube = "https://api.apify.com/v2/datasets/1QGeVr2JCgGqahg48/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
         const apiInstagram = "https://api.apify.com/v2/datasets/rkYsnz4RNoV7XNCdy/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
 
-        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
+        // CONFIGURAÇÃO API-FOOTBALL (Brasileirão 2026)
+        const API_FOOTBALL_KEY = "INSIRA_SUA_CHAVE_AQUI"; // Gere em https://www.api-football.com/register
+        const LEAGUE_ID = 71; // Brasileirão
+        const SEASON = 2026;
 
-        // YouTube e Instagram mantidos...
+        setInterval(() => { 
+            document.getElementById('clock').innerText = new Date().toLocaleString('pt-BR'); 
+        }, 1000);
+
+        // YouTube
         fetch(apiYoutube).then(r => r.json()).then(data => {
             const container = document.getElementById('youtube-feed');
             data.slice(0, 8).forEach(v => {
                 container.innerHTML += `<a href="${v.url}" target="_blank" class="block border-b pb-2 mb-2 last:border-0 hover:bg-gray-50 transition p-1"><img src="${v.thumbnailUrl}" class="rounded-lg w-full mb-1 border shadow-sm"><h3 class="font-bold text-[10px] leading-tight">${v.title}</h3></a>`;
             });
+        }).catch(() => {
+            document.getElementById('youtube-feed').innerHTML = '<p class="text-xs text-gray-500 p-2">Erro ao carregar YouTube</p>';
         });
 
+        // Instagram
         fetch(apiInstagram).then(r => r.json()).then(data => {
             const container = document.getElementById('instagram-feed');
             data.filter(p => p.displayUrl).slice(0, 8).forEach(post => {
                 container.innerHTML += `<a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden border group bg-gray-100 shadow-sm"><img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500"></a>`;
             });
+        }).catch(() => {
+            document.getElementById('instagram-feed').innerHTML = '<p class="text-xs text-gray-500 p-2">Erro ao carregar Instagram</p>';
         });
 
-        // Tabela Atualizada Brasileirão 2026 (Ref: GE)
-        const times = [
-            "Palmeiras", "Flamengo", "Botafogo", "Cruzeiro", "São Paulo", 
-            "Grêmio", "Corinthians", "Atlético-MG", "Bahia", "Fortaleza", 
-            "Internacional", "Vasco", "Fluminense", "Athletico-PR", "Cuiabá", 
-            "Criciúma", "Vitória", "Atlético-GO", "Santos", "Novorizontino"
-        ];
-        
-        const tableBody = document.getElementById('brasileirao-body');
-        times.forEach((time, i) => {
-            const pos = i + 1;
-            let status = "";
-            if (pos <= 4) status = "g-libertadores";
-            else if (pos <= 6) status = "g-pre-lib";
-            else if (pos <= 12) status = "g-sula";
-            else if (pos >= 17) status = "z-rebaixamento";
-
-            const sepClass = time === "Palmeiras" ? "pos-sep" : "";
+        // ========== TABELA BRASILEIRÃO COM API-FOOTBALL ==========
+        function carregarTabelaBrasileirao() {
+            const url = `https://api-football-v1.p.rapidapi.com/v3/standings?league=${LEAGUE_ID}&season=${SEASON}`;
             
-            // Dados simulados de início de temporada 2026
-            const p = (20 - i) * 1; 
-            const v = Math.floor(p/3);
-            const sg = Math.floor(p/2);
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': API_FOOTBALL_KEY,
+                    'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response && data.response.length > 0) {
+                    const standings = data.response[0].standings[0];
+                    const tableBody = document.getElementById('brasileirao-body');
+                    tableBody.innerHTML = '';
 
-            tableBody.innerHTML += `<tr class="${status} ${sepClass}">
-                <td class="text-left px-2 font-bold">${pos} ${time}</td>
-                <td>${p}</td><td>${v}</td><td>${sg}</td>
-            </tr>`;
-        });
+                    standings.forEach(time => {
+                        const pos = time.rank;
+                        let status = "";
+                        
+                        if (pos <= 4) status = "g-libertadores";
+                        else if (pos <= 6) status = "g-pre-lib";
+                        else if (pos <= 12) status = "g-sula";
+                        else if (pos >= 17) status = "z-rebaixamento";
 
-        // Notícias e Calendário carregados aqui...
+                        const sepClass = time.team.name === "Palmeiras" ? "pos-sep" : "";
+                        const goalDiff = time.goalsDiff;
+                        const wins = time.all.win;
+                        const points = time.points;
+                        const teamName = time.team.name;
+
+                        tableBody.innerHTML += `<tr class="${status} ${sepClass}">
+                            <td class="text-left px-2 font-bold">${pos} ${teamName}</td>
+                            <td>${points}</td>
+                            <td>${wins}</td>
+                            <td>${goalDiff > 0 ? '+' : ''}${goalDiff}</td>
+                        </tr>`;
+                    });
+
+                    // Mostrar tabela e esconder loading
+                    document.getElementById('loading-table').style.display = 'none';
+                    document.getElementById('table-container').style.display = 'block';
+                } else {
+                    throw new Error('Dados inválidos da API');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar tabela:', error);
+                document.getElementById('loading-table').innerHTML = `
+                    <p class="text-xs text-gray-600 p-2">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        Chave de API não configurada. Acesse https://www.api-football.com
+                    </p>
+                `;
+            });
+        }
+
+        // Carrega tabela ao iniciar
+        carregarTabelaBrasileirao();
+
+        // Atualiza tabela a cada 5 minutos
+        setInterval(carregarTabelaBrasileirao, 5 * 60 * 1000);
     </script>
 </body>
 </html>
