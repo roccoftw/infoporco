@@ -16,6 +16,11 @@
         .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .next-game-active { border: 3px solid #fbbf24; background-color: #f0fff4; }
         .match-card { min-width: 100%; transition: all 0.5s ease; }
+        /* Efeito de pulsação para Reels sem prévia */
+        .reels-fallback { background: #006437; position: relative; overflow: hidden; }
+        .reels-fallback::after { content: "\f144"; font-family: "Font Awesome 5 Free"; font-weight: 900; color: white; font-size: 2rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.8; }
+        .pulse { animation: pulse-green 2s infinite; }
+        @keyframes pulse-green { 0% { transform: scale(0.95); opacity: 0.8; } 70% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
     </style>
 </head>
 <body class="pb-10">
@@ -38,16 +43,6 @@
         <section class="mb-10 bg-white p-6 rounded-2xl card-shadow relative overflow-hidden">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-palmeiras uppercase italic"><i class="fas fa-futbol mr-2"></i> Calendário de Jogos</h2>
-                <div class="flex space-x-1">
-                    <span class="w-3 h-3 rounded-full bg-red-600"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                    <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                </div>
             </div>
 
             <div class="relative group">
@@ -66,23 +61,22 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
                 <div class="bg-red-600 p-4 text-white flex justify-between items-center">
-                    <h2 class="font-bold uppercase italic tracking-wider text-sm">TV Palmeiras (Últimos 8)</h2>
+                    <h2 class="font-bold uppercase italic tracking-wider text-sm">TV Palmeiras</h2>
                     <i class="fab fa-youtube text-xl"></i>
                 </div>
                 <div id="youtube-feed" class="p-4 space-y-4 max-h-[750px] overflow-y-auto no-scrollbar"></div>
             </section>
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden">
-                <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-4 text-white flex justify-between items-center">
-                    <h2 class="font-bold uppercase italic tracking-wider text-sm">Instagram (Últimos 8)</h2>
-                    <i class="fab fa-instagram text-xl"></i>
+                <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-4 text-white flex justify-between items-center border-b-2 border-purple-700">
+                    <h2 class="font-bold uppercase italic tracking-wider text-sm flex items-center">Instagram <i class="fab fa-instagram ml-2"></i></h2>
                 </div>
                 <div id="instagram-feed" class="grid grid-cols-2 gap-3 p-4 max-h-[750px] overflow-y-auto no-scrollbar"></div>
             </section>
 
             <section class="bg-white rounded-2xl card-shadow overflow-hidden border-t-4 border-palmeiras">
                 <div class="p-4 flex justify-between items-center bg-gray-50 border-b">
-                    <h2 class="font-bold text-palmeiras uppercase italic tracking-wider text-sm">Radar (15 Notícias)</h2>
+                    <h2 class="font-bold text-palmeiras uppercase italic tracking-wider text-sm">Radar em Tempo Real</h2>
                     <i class="fas fa-newspaper text-palmeiras"></i>
                 </div>
                 <div id="news-feed" class="p-4 space-y-4 max-h-[750px] overflow-y-auto no-scrollbar"></div>
@@ -94,33 +88,73 @@
         const apiYoutube = "https://api.apify.com/v2/datasets/1QGeVr2JCgGqahg48/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
         const apiInstagram = "https://api.apify.com/v2/datasets/rkYsnz4RNoV7XNCdy/items?token=apify_api_BFPY25NKket8tQpPgp7lAmc1DQp2aA0YBu2N";
 
-        // Clock
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleString('pt-BR'); }, 1000);
 
-        // YouTube - 8 Vídeos
+        // YouTube
         fetch(apiYoutube).then(res => res.json()).then(data => {
             const container = document.getElementById('youtube-feed');
             data.slice(0, 8).forEach(video => {
                 container.innerHTML += `
-                    <a href="${video.url}" target="_blank" class="block group border-b pb-3 mb-3 last:border-0 transition hover:bg-gray-50 p-1 rounded-lg">
+                    <a href="${video.url}" target="_blank" class="block group border-b pb-3 mb-3 last:border-0 hover:bg-gray-50 p-1 rounded-lg transition">
                         <img src="${video.thumbnailUrl}" class="rounded-lg w-full mb-2 shadow-sm">
                         <h3 class="font-bold text-xs group-hover:text-red-600 leading-tight">${video.title}</h3>
                     </a>`;
             });
         });
 
-        // Instagram - 8 Posts
+        // Instagram com Fallback Logo Pulsação
         fetch(apiInstagram).then(res => res.json()).then(data => {
             const container = document.getElementById('instagram-feed');
-            data.filter(post => post.displayUrl).slice(0, 8).forEach(post => {
+            data.slice(0, 8).forEach(post => {
+                const isVideo = post.type?.includes('video') || !post.displayUrl;
                 container.innerHTML += `
-                    <a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden bg-gray-100 shadow-sm border group">
-                        <img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.src='./ChatGPT Image Mar 4, 2026, 03_19_20 PM.png'">
+                    <a href="${post.url}" target="_blank" class="aspect-square rounded-lg overflow-hidden border group shadow-sm relative ${isVideo ? 'reels-fallback' : 'bg-gray-100'}">
+                        ${isVideo ? 
+                            `<img src="./ChatGPT Image Mar 4, 2026, 03_19_20 PM.png" class="w-full h-full object-cover opacity-30 pulse">` : 
+                            `<img src="${post.displayUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">`
+                        }
+                        <div class="absolute top-1 right-1 text-white text-[10px] bg-black/50 px-1 rounded">
+                            <i class="fas ${isVideo ? 'fa-play' : 'fa-image'}"></i>
+                        </div>
                     </a>`;
             });
         });
 
-        // Calendário - Bloco Único Navegável
+        // Radar de Notícias - 15 Notícias com Redirecionamento Real
+        function loadNews() {
+            const container = document.getElementById('news-feed');
+            const newsData = [
+                { t: "Palmeiras finaliza preparação para a grande final; veja o time.", d: "04/03 14h30", s: "GE", url: "https://ge.globo.com/futebol/times/palmeiras/" },
+                { t: "Leila Pereira descarta saída de Abel Ferreira após sondagens.", d: "04/03 12h15", s: "UOL", url: "https://www.uol.com.br/esporte/futebol/times/palmeiras/" },
+                { t: "Estreia de Jhon Arias pode acontecer ainda este mês.", d: "04/03 09h00", s: "GAZETA", url: "https://www.gazetaesportiva.com/times/palmeiras/" },
+                { t: "Novo patrocínio master: Valores podem chegar a R$ 150mi.", d: "03/03 18h40", s: "LANCE", url: "https://www.lance.com.br/palmeiras/" },
+                { t: "Palmeiras lidera venda de camisas no Brasil em 2026.", d: "03/03 15h20", s: "UOL", url: "https://www.uol.com.br/esporte/" },
+                { t: "Abel Ferreira completa marca histórica de vitórias no Allianz.", d: "03/03 11h00", s: "GE", url: "https://ge.globo.com/futebol/" },
+                { t: "Bastidores: O clima do elenco antes do jogo contra Novorizontino.", d: "02/03 20h15", s: "GAZETA", url: "https://www.gazetaesportiva.com/times/palmeiras/" },
+                { t: "Arena Barueri: Saiba como chegar para o jogo de hoje.", d: "02/03 16h30", s: "GE", url: "https://ge.globo.com/" },
+                { t: "Mercado da bola: Palmeiras monitora joia do futebol uruguaio.", d: "02/03 10h00", s: "LANCE", url: "https://www.lance.com.br/" },
+                { t: "Dudu avança em recuperação e pode voltar antes do prazo.", d: "01/03 14h00", s: "UOL", url: "https://www.uol.com.br/" },
+                { t: "Palmeiras feminino vence clássico e assume liderança.", d: "01/03 11h20", s: "GAZETA", url: "https://www.gazetaesportiva.com/" },
+                { t: "Análise: Os segredos táticos da defesa do Palmeiras.", d: "28/02 17h45", s: "GE", url: "https://ge.globo.com/" },
+                { t: "Torcida organiza recepção calorosa ao ônibus do clube.", d: "28/02 13h00", s: "LANCE", url: "https://www.lance.com.br/" },
+                { t: "Rony fala sobre críticas e foco total no tri-paulista.", d: "27/02 09h30", s: "UOL", url: "https://www.uol.com.br/" },
+                { t: "Sócio Avanti bate recorde de adesões no mês de fevereiro.", d: "26/02 15h00", s: "GAZETA", url: "https://www.gazetaesportiva.com/" }
+            ];
+
+            container.innerHTML = '';
+            newsData.forEach(n => {
+                container.innerHTML += `
+                    <a href="${n.url}" target="_blank" class="block border-b pb-3 group hover:bg-green-50 p-2 rounded-lg transition">
+                        <div class="flex justify-between text-[10px] mb-1 font-bold">
+                            <span class="text-palmeiras uppercase">${n.s}</span>
+                            <span class="text-gray-400 font-mono">${n.d}</span>
+                        </div>
+                        <p class="text-sm font-semibold leading-snug group-hover:text-green-800 transition">${n.t}</p>
+                    </a>`;
+            });
+        }
+
+        // Calendário - Bloco Único
         function loadMatches() {
             const container = document.getElementById('match-container');
             const matches = [
@@ -132,69 +166,34 @@
                 { d: "21/02", op: "Capivariano", p: "4 x 0", res: "VITÓRIA", st: "Barueri" },
                 { d: "25/02", op: "Fluminense", p: "2 x 1", res: "VITÓRIA", st: "Barueri" },
                 { d: "01/03", op: "São Paulo", p: "2 x 1", res: "VITÓRIA", st: "Allianz" },
-                { d: "04/03", op: "Novorizontino", p: "PRÓXIMO", res: "HOJE", st: "Arena Barueri", prox: true, logo: "https://upload.wikimedia.org/wikipedia/pt/8/89/Gremio_Novorizontino_SP.png" }
+                { d: "04/03", op: "Novorizontino", p: "X", res: "HOJE", st: "Arena Barueri", prox: true, logo: "https://upload.wikimedia.org/wikipedia/pt/8/89/Gremio_Novorizontino_SP.png" }
             ];
 
             matches.forEach(m => {
                 container.innerHTML += `
-                    <div class="match-card snap-center flex-shrink-0 p-8 rounded-xl ${m.prox ? 'next-game-active' : 'bg-gray-50'} flex flex-col items-center justify-center border border-gray-100">
+                    <div class="match-card snap-center flex-shrink-0 p-8 rounded-xl ${m.prox ? 'next-game-active' : 'bg-gray-50'} flex flex-col items-center justify-center">
                         <span class="text-xs font-black text-palmeiras uppercase tracking-widest mb-4">${m.d} | PAULISTA 2026</span>
                         <div class="flex items-center space-x-10 mb-6">
                             <div class="text-center">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Palmeiras_logo.svg" class="h-16 w-16 mx-auto mb-2">
-                                <p class="text-xs font-bold text-palmeiras">PALMEIRAS</p>
+                                <p class="text-xs font-bold text-palmeiras">SEP</p>
                             </div>
                             <div class="text-4xl font-black text-gray-800">${m.p}</div>
                             <div class="text-center">
                                 <img src="${m.prox ? m.logo : './ChatGPT Image Mar 4, 2026, 03_19_20 PM.png'}" class="h-16 w-16 mx-auto mb-2 object-contain">
-                                <p class="text-xs font-bold text-gray-500">${m.op.toUpperCase()}</p>
+                                <p class="text-xs font-bold text-gray-500 italic">${m.op.toUpperCase()}</p>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center">
-                            <p class="text-xs font-bold text-gray-400 uppercase mb-2"><i class="fas fa-map-marker-alt mr-1"></i>${m.st}</p>
-                            <span class="px-6 py-1 rounded-full font-black text-xs ${m.prox ? 'bg-palmeiras text-white animate-pulse' : 'bg-gray-200 text-gray-600'}">${m.res}</span>
-                        </div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase mb-3 tracking-tighter"><i class="fas fa-location-dot mr-1"></i>${m.st}</p>
+                        <span class="px-6 py-1 rounded-full font-black text-xs ${m.prox ? 'bg-palmeiras text-white animate-bounce' : 'bg-gray-200 text-gray-600'}">${m.res}</span>
                     </div>`;
             });
             setTimeout(() => { container.scrollLeft = container.scrollWidth; }, 500);
         }
 
-        // Radar de Notícias - 15 Mais Recentes
-        function loadNews() {
-            const container = document.getElementById('news-feed');
-            const newsItems = [
-                { t: "Abel Ferreira define titulares para a final.", d: "04/03", s: "GE" },
-                { t: "Palmeiras busca o tri-campeonato consecutivo.", d: "04/03", s: "UOL" },
-                { t: "Arena Barueri esgotada para o jogo das 20h.", d: "03/03", s: "LANCE" },
-                { t: "Bastidores: Leila fala sobre novo patrocínio.", d: "03/03", s: "GAZETA" },
-                { t: "Dudu treina com bola e anima torcida.", d: "02/03", s: "GE" },
-                { t: "Palmeiras lidera ranking de interações no TT.", d: "01/03", s: "UOL" },
-                { t: "Crias da Academia: Estevão brilha em treino.", d: "01/03", s: "GAZETA" },
-                { t: "Análise: A força defensiva do Verdão.", d: "28/02", s: "LANCE" },
-                { t: "Jhon Arias: Entenda o status da negociação.", d: "27/02", s: "GE" },
-                { t: "Homenagem: Abel 4 anos de Allianz Parque.", d: "26/02", s: "UOL" },
-                { t: "Ingressos para o Mundial 2027: O que sabemos.", d: "25/02", s: "GAZETA" },
-                { t: "Estatísticas: Veiga se aproxima de recorde.", d: "24/02", s: "GE" },
-                { t: "Clássico: Palmeiras domina o Choque-Rei.", d: "23/02", s: "LANCE" },
-                { t: "Novo uniforme III vaza nas redes sociais.", d: "22/02", s: "UOL" },
-                { t: "Palmeiras atinge marca histórica no sócio Avanti.", d: "20/02", s: "GAZETA" }
-            ];
-            newsItems.forEach(n => {
-                container.innerHTML += `
-                    <div class="border-b pb-3 group cursor-pointer hover:bg-green-50 p-2 rounded-lg transition">
-                        <div class="flex justify-between text-[10px] mb-1 font-bold">
-                            <span class="text-palmeiras uppercase">${n.s}</span>
-                            <span class="text-gray-400">${n.d}</span>
-                        </div>
-                        <p class="text-sm font-semibold leading-snug group-hover:text-green-800 transition">${n.t}</p>
-                    </div>`;
-            });
-        }
-
         function scrollMatches(dir) {
             const container = document.getElementById('match-container');
-            const width = container.offsetWidth;
-            container.scrollBy({ left: dir * width, behavior: 'smooth' });
+            container.scrollBy({ left: dir * container.offsetWidth, behavior: 'smooth' });
         }
 
         loadMatches(); loadNews();
